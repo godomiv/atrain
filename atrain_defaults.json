@@ -1,0 +1,68 @@
+{
+  "version": "1.5",
+  "created": "2025-06-21T20:11:27.037815",
+  "description": "A-Train default tags and presets",
+  "default_tags": [
+    {
+      "name": "project path",
+      "type": "dynamic",
+      "default": "[project_path]",
+      "category": "System"
+    },
+    {
+      "name": "shot name",
+      "type": "dynamic",
+      "default": "[shot_name]",
+      "category": "System"
+    },
+    {
+      "name": "version",
+      "type": "version",
+      "version": "v01",
+      "category": "System"
+    },
+    {
+      "name": "/",
+      "type": "separator",
+      "value": "/",
+      "category": "System"
+    },
+    {
+      "name": "user",
+      "type": "dynamic",
+      "default": "[user]",
+      "category": "System"
+    },
+    {
+      "name": "[read_name]",
+      "type": "text",
+      "default": "[read_name]",
+      "category": "System"
+    }
+  ],
+  "default_presets": {
+    "Default": {
+      "tags": [
+        "project path",
+        "shot name",
+        "version"
+      ],
+      "format": "exr",
+      "category": "System",
+      "created": "2025-06-21T20:11:27.037815",
+      "author": "system",
+      "description": "Basic project/shot/version pattern"
+    },
+    "Review": {
+      "tags": [
+        "shot name",
+        "user"
+      ],
+      "format": "jpeg",
+      "category": "System",
+      "created": "2025-06-21T20:11:27.037815",
+      "author": "system",
+      "description": "Simple review output"
+    }
+  }
+}

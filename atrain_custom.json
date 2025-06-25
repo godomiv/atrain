@@ -1,0 +1,40 @@
+{
+  "version": "1.5",
+  "created": "2025-06-21T20:11:27.038317",
+  "last_modified": "2025-06-22T01:02:46.527570",
+  "author": "godom",
+  "custom_tags": [
+    {
+      "name": "denose",
+      "type": "text",
+      "category": "vfx",
+      "default": "dns"
+    }
+  ],
+  "custom_expression_tags": [],
+  "custom_presets": {
+    "dns": {
+      "tags": [
+        "project path",
+        "[read_name]",
+        "denose"
+      ],
+      "format": "jpeg",
+      "category": "General",
+      "created": "2025-06-22T01:00:08.682467",
+      "author": "godom",
+      "version": "1.0"
+    },
+    "dfd": {
+      "tags": [
+        "project path",
+        "[read_name]"
+      ],
+      "format": "jpeg",
+      "category": "tvf",
+      "created": "2025-06-22T01:01:08.203347",
+      "author": "godom",
+      "version": "1.0"
+    }
+  }
+}
