@@ -11,7 +11,13 @@ from .models import TagData, PathContext
 from .tags import tag_factory
 from .nuke import nuke_bridge
 from .utils import event_bus
+# В конце файла atrain/core/path_builder.py добавьте:
 
+# Для обратной совместимости импортируем старый API
+try:
+    from .path_builder_adapter import PathBuilder as OldPathBuilder, build_path_from_tags
+except ImportError:
+    pass
 
 class PathBuilder:
     """Улучшенный построитель путей"""
