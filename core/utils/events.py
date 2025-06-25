@@ -2,6 +2,7 @@
 """
 Система событий для A-Train
 """
+import functools  # Добавьте в начало файла
 
 from typing import Dict, List, Callable, Any, Optional
 import weakref
