@@ -11,13 +11,7 @@ from .models import TagData, PathContext
 from .tags import tag_factory
 from .nuke import nuke_bridge
 from .utils import event_bus
-# В конце файла atrain/core/path_builder.py добавьте:
 
-# Для обратной совместимости импортируем старый API
-try:
-    from .path_builder_adapter import PathBuilder as OldPathBuilder, build_path_from_tags
-except ImportError:
-    pass
 
 class PathBuilder:
     """Улучшенный построитель путей"""
@@ -81,7 +75,7 @@ class PathBuilder:
             if hasattr(self._context, key):
                 setattr(self._context, key, value)
     
-    def build_path(self) -> str:
+    def build_path(self, live_preview: bool = False) -> str:
         """Построить путь из тегов"""
         if not self.tags:
             return ""
@@ -89,6 +83,9 @@ class PathBuilder:
         try:
             # Обновляем контекст из Nuke если доступен
             self._update_context_from_nuke()
+            
+            # Добавляем live_preview в контекст
+            self._context.live_preview = live_preview
             
             # Преобразуем в словарь для стратегий
             context_dict = self._context.to_dict()
@@ -253,3 +250,88 @@ class PathBuilder:
             info['version'] = extract_version(path)
         
         return info
+    
+    # =====================
+    # Методы для совместимости со старым API
+    # =====================
+    
+    def clear_tags(self):
+        """Очистить все теги (старый API)"""
+        self.clear()
+    
+    def set_context_var(self, key: str, value: Any):
+        """Установить контекстную переменную (старый API)"""
+        self.update_context(**{key: value})
+    
+    def _evaluate_expression_live(self, expression: str) -> str:
+        """Оценка expression (для совместимости с UI)"""
+        try:
+            if self.bridge.available:
+                simple_expressions = {
+                    '[value root.frame]': str(self.bridge.get_current_frame()),
+                    '[value root.first_frame]': str(self.bridge.get_frame_range()[0]),
+                    '[value root.last_frame]': str(self.bridge.get_frame_range()[1]),
+                    '[file rootname [value root.name]]': self.bridge.get_script_basename(),
+                    '[file dirname [value root.name]]': self.bridge.get_script_path()
+                }
+                
+                result = expression
+                for expr, value in simple_expressions.items():
+                    if expr in result:
+                        result = result.replace(expr, value)
+                
+                return result
+        except:
+            pass
+        
+        return expression
+    
+    # Динамические обработчики для совместимости
+    @property
+    def dynamic_handlers(self):
+        """Обработчики для совместимости со старым UI"""
+        return {
+            'shot name': self._get_shot_name,
+            'project path': self._get_project_path,
+            'user': self._get_user_name,
+            '[read_name]': self._get_read_name,
+            'sequence': self._get_sequence_name,
+            'scene': self._get_scene_name,
+            'department': self._get_department,
+            'task': self._get_task_name,
+        }
+    
+    def _get_shot_name(self):
+        return self._context.shot_name or "shot_name"
+    
+    def _get_project_path(self):
+        return self._context.project_path or "/project/path"
+    
+    def _get_user_name(self):
+        return self._context.user_name or "user"
+    
+    def _get_read_name(self):
+        return self._context.read_name or "read_name"
+    
+    def _get_sequence_name(self):
+        return self._context.sequence_name or "sequence"
+    
+    def _get_scene_name(self):
+        if self.bridge.available:
+            return self.bridge.get_script_basename()
+        return "scene"
+    
+    def _get_department(self):
+        return self._context.department or "comp"
+    
+    def _get_task_name(self):
+        return self._context.task_name or "task"
+
+
+# Для обратной совместимости
+def build_path_from_tags(tags: List[TagData], live_preview: bool = False) -> str:
+    """Построить путь из списка тегов (старый API)"""
+    builder = PathBuilder()
+    for tag in tags:
+        builder.add_tag(tag)
+    return builder.build_path(live_preview)
